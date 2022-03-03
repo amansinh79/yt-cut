@@ -1,0 +1,19 @@
+{
+  "name": "yt-cut",
+  "version": "1.0.0",
+  "description": "download part of yt videos",
+  "main": "index.js",
+  "bin": {
+    "yc": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "solvencino",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.0",
+    "minimist": "^1.2.5",
+    "ytdl-core": "^4.10.1"
+  }
+}

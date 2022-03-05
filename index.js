@@ -10,6 +10,8 @@ const start = args.s && hmsToSecondsOnly(args.s.toString())
 const end = args.e && hmsToSecondsOnly(args.e.toString())
 const url = args._[0]
 const op = args.o || 'output.mp4'
+const r = args.r
+
 console.log('Loading...')
 
 ytdl.getInfo(url).then(async (info) => {
@@ -20,18 +22,18 @@ ytdl.getInfo(url).then(async (info) => {
     process.exit()
   }
 
-  const videoStreams = info.formats.filter((t) => t.hasVideo && !t.hasAudio && t.container === 'mp4')
-  const audioStreams = info.formats.filter((t) => !t.hasVideo && t.hasAudio && t.container === 'mp4')
+  const videoStreams = info.formats.filter((t) => t.hasVideo && !t.hasAudio)
+  const audioStreams = info.formats.filter((t) => !t.hasVideo && t.hasAudio)
 
   let { video } = await inq.prompt({
     name: 'video',
     type: 'list',
     message: 'choose video quality',
-    choices: videoStreams.map((t) => t.qualityLabel + ' ' + t.videoCodec),
+    choices: videoStreams.map((t) => t.qualityLabel + ' ' + t.videoCodec + ' ' + t.container),
     loop: false,
   })
 
-  video = videoStreams.find((t) => t.qualityLabel + ' ' + t.videoCodec === video).url
+  video = videoStreams.find((t) => t.qualityLabel + ' ' + t.videoCodec + ' ' + t.container === video).url
 
   let { audio } = await inq.prompt({
     name: 'audio',
@@ -45,8 +47,9 @@ ytdl.getInfo(url).then(async (info) => {
 
   const ss = start ? ['-ss', start] : []
   const e = end ? ['-t', end - start] : []
+  const re_enc = r ? [] : ['-c:v', 'copy', '-c:a', 'copy']
 
-  const proc = spawn('ffmpeg', ['-hide_banner', '-y', ...ss, '-i', video, ...ss, '-i', audio, '-c:v', 'copy', '-c:a', 'copy', ...e, op])
+  const proc = spawn('ffmpeg', ['-hide_banner', '-y', ...ss, '-i', video, ...ss, '-i', audio, ...re_enc, ...e, op])
   proc.stderr.pipe(process.stderr)
   proc.stdout.pipe(process.stdout)
 })

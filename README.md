@@ -6,6 +6,6 @@ start and end times are optional. defaults to full video length.
 
 you can specify -r. to re-encode instead of copying.
 
-output is optional. defaults to output.mp4
+output is optional. defaults to <video_title>.mp4
 
 depends on ffmpeg.
